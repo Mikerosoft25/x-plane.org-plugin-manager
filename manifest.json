@@ -15,8 +15,8 @@
   },
 
   "icons": {
-    "48": "icon.svg",
-    "96": "icon.svg"
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
   },
 
   "browser_action": {
@@ -32,6 +32,7 @@
   "permissions": [
     "storage",
     "activeTab",
+    "tabs",
     "*://forums.x-plane.org/*"
   ]
 
