@@ -35,9 +35,11 @@ function httpGet(url){
 		pluginName = JSON.parse(arr[1]).name;
 		dateString = date.getDate() + "." + month[date.getMonth()] + "." + date.getFullYear();
 
-		saveStorage(url,pluginName,version);
 
-		console.log(dateString+" , version: " + version);;
+		pushToArray(url,pluginName,version);
+		saveStorage();
+
+		console.log(dateString+" , version: " + version);
 	};
 	xmlHttp.send();
 }
@@ -51,9 +53,11 @@ function getStorage(){
 	});
 }
 
-function saveStorage(url,name,version){
+function pushToArray(url,name,version){
 	plugins.push({url: url, name: name, version: version});
+}
 
+function saveStorage(){
 	browser.storage.local.set({
 			"plugins": plugins,
 		});
@@ -69,6 +73,52 @@ if(addButton){
 	addButton.addEventListener("click", function() {
 		getTabId();
 	});
+}
+
+var editButton = document.getElementById('editButton');
+var toggle = 0;
+
+if(editButton){
+	editButton.addEventListener("click", function() {
+		if(toggle == 0){
+			toggle = 1;
+			var editImg = document.getElementById("editImg");
+			editImg.setAttribute("src", "../icons/done.svg");
+
+			var divs = document.querySelectorAll(".pluginDiv");
+			console.log(divs);	
+			for (var i = 0; i < divs.length; i++) {
+				var deleteImg = document.createElement("img");
+				deleteImg.setAttribute("src", "../icons/delete.svg");
+				deleteImg.setAttribute("align", "right");
+				deleteImg.setAttribute("lineHeight", "40px");
+				deleteImg.classList.add("deleteImgs");
+				divs[i].appendChild(deleteImg);														
+				deleteImg.addEventListener("click", function(){
+					deleteRow(this.parentElement.id);
+					console.log("id: " + this.parentElement.id);	
+				}); 
+			}	
+		}
+		else{
+			toggle = 0;
+			var editImg = document.getElementById("editImg");
+			editImg.setAttribute("src", "../icons/edit.svg");
+
+			removeDelImgs();
+		}
+	});
+}
+
+function removeDelImgs(){
+	[].forEach.call(document.querySelectorAll('.deleteImgs'),function(e){
+		e.parentNode.removeChild(e);
+	});	
+}
+
+function deleteRow(id){
+	plugins.splice(id, 1);
+	saveStorage();
 }
 
 function getTabId(){
@@ -94,13 +144,15 @@ function updateDivs(plugins){
 
 	for (var i = 0; i < plugins.length; i++) {
 		var div = document.createElement("div");
+		div.classList.add("pluginDiv");
 		div.style.width = "100%";
-		div.style.height = "30px";
+		div.style.height = "40px";
 		div.style.background = "#5c5757";
 		div.style.color = "white";
 		div.style.border = "1px solid #363434";
-		div.style.lineHeight = "30px";
-		div.innerHTML = "Plugin: " + plugins[i].name + "Version: " + plugins[i].version;
+		div.style.lineHeight = "40px";
+		div.id = i;
+		div.innerHTML = "Plugin: " + plugins[i].name + " Version: " + plugins[i].version + " , " + div.id;
 
 		main.appendChild(div);
 		console.log("updated.")

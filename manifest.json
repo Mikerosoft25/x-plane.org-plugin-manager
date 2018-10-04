@@ -22,8 +22,8 @@
   "browser_action": {
     "browser_style": true,
     "default_icon": {
-      "19": "icons/icon.svg",
-      "38": "icons/icon.svg"
+      "48": "icons/icon.svg",
+      "96": "icons/icon.svg"
     },
     "default_title": "X-Plane plugin manager",
     "default_popup": "popup/popup.html"
