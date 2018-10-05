@@ -4,6 +4,8 @@ var version;
 var dateString;
 var plugins = [];
 
+console.log("plugins", plugins);
+
 // function onCleared() {
 //   console.log("OK");
 // }
@@ -124,6 +126,12 @@ function deleteRow(id){
 function getTabId(){
 	function logTabs(tabs) {
 	  for (let tab of tabs) {
+	    for (var i = 0; i < plugins.length; i++) {
+	    	if(tab.url == plugins[i].url){
+	    		console.log("already exists");
+	    		return;
+	    	}
+	    }
 	    httpGet(tab.url);
 	  }
 	}
@@ -153,6 +161,12 @@ function updateDivs(plugins){
 		div.style.lineHeight = "40px";
 		div.id = i;
 		div.innerHTML = "Plugin: " + plugins[i].name + " Version: " + plugins[i].version + " , " + div.id;
+		
+		// var URL = plugins[i].url;
+		
+		div.addEventListener("click", function(){
+			window.open(plugins[this.id].url);
+		});
 
 		main.appendChild(div);
 		console.log("updated.")
