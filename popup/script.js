@@ -1,8 +1,6 @@
 var regex = /<script type='application\/ld\+json'>\n({\s+"@context": "http:\/\/schema\.org",\s+"@type": "WebApplication",[\s\S]+?)<\/script>/g;
-var pluginName;
-var version;
-var dateString;
 var plugins = [];
+var linkToggle = false;
 
 console.log("plugins", plugins);
 
@@ -33,9 +31,9 @@ function httpGet(url){
 		var response = xmlHttp.responseText;
 		var arr = regex.exec(response);
 		var date = new Date(JSON.parse(arr[1]).dateModified);
-		version = JSON.parse(arr[1]).softwareVersion;
-		pluginName = JSON.parse(arr[1]).name;
-		dateString = date.getDate() + "." + month[date.getMonth()] + "." + date.getFullYear();
+		var version = JSON.parse(arr[1]).softwareVersion;
+		var pluginName = JSON.parse(arr[1]).name;
+		var dateString = date.getDate() + "." + month[date.getMonth()] + "." + date.getFullYear();
 
 
 		pushToArray(url,pluginName,version);
@@ -82,6 +80,7 @@ var toggle = 0;
 
 if(editButton){
 	editButton.addEventListener("click", function() {
+		linkToggle = true;
 		if(toggle == 0){
 			toggle = 1;
 			var editImg = document.getElementById("editImg");
@@ -92,8 +91,9 @@ if(editButton){
 			for (var i = 0; i < divs.length; i++) {
 				var deleteImg = document.createElement("img");
 				deleteImg.setAttribute("src", "../icons/delete.svg");
-				deleteImg.setAttribute("align", "right");
-				deleteImg.setAttribute("lineHeight", "40px");
+				deleteImg.style.float = "right";
+				deleteImg.style.verticalAlign = "middle";
+				deleteImg.style.height = "100%";
 				deleteImg.classList.add("deleteImgs");
 				divs[i].appendChild(deleteImg);														
 				deleteImg.addEventListener("click", function(){
@@ -107,6 +107,7 @@ if(editButton){
 			var editImg = document.getElementById("editImg");
 			editImg.setAttribute("src", "../icons/edit.svg");
 
+			linkToggle = false;
 			removeDelImgs();
 		}
 	});
@@ -160,12 +161,12 @@ function updateDivs(plugins){
 		div.style.border = "1px solid #363434";
 		div.style.lineHeight = "40px";
 		div.id = i;
-		div.innerHTML = "Plugin: " + plugins[i].name + " Version: " + plugins[i].version + " , " + div.id;
+		div.innerHTML =  plugins[i].name + ", Version: " + plugins[i].version + " , " + div.id;
 		
 		// var URL = plugins[i].url;
 		
 		div.addEventListener("click", function(){
-			window.open(plugins[this.id].url);
+			openLink(plugins[this.id].url);
 		});
 
 		main.appendChild(div);
@@ -174,3 +175,8 @@ function updateDivs(plugins){
 		
 }
 
+function openLink(url){
+	if(linkToggle == false){
+		window.open(url);	
+	}
+}
