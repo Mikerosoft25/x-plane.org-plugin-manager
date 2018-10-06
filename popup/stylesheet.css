@@ -20,3 +20,42 @@ body{
 	height: 100%;
 	background-color: #363434;
 }
+
+#nameDiv{
+	background-color: #5c5757;
+	width: 350px;
+	height: 25px;
+	float: left;
+	border: 1px solid #363434;
+	line-height: 25px;
+	cursor: pointer;
+}
+#insVerDiv{
+	background-color: #5c5757;
+	width: 175px;
+	height: 25px;
+	float: left;
+	border: 1px solid #363434;
+	line-height: 25px;
+	border-bottom: 2px solid #363434;
+	cursor: pointer;
+}
+.curVerDiv{
+	background-color: #5c5757;
+	width: 175px;
+	height: 25px;
+	float: left;
+	border: 1px solid #363434;
+	line-height: 25px;
+	border-bottom: 2px solid #363434;
+	cursor: pointer;
+}
+.delDiv{
+ 	background-color: #5c5757;
+	width: 50px;
+	height: 50px;
+	float: right;
+	border: 1px solid #363434;
+	border-bottom: 2px solid #363434;
+	cursor: pointer;
+}
