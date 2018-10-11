@@ -173,6 +173,7 @@ if(editButton){
 			var editImg = document.getElementById("editImg");
 			editImg.setAttribute("src", "../icons/edit.svg");
 			toggle = true;
+			checkVers();
 		}
 	});
 }
