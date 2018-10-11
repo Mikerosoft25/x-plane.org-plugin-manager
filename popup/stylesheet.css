@@ -2,12 +2,54 @@ body{
 	height: 600px;
 	width: 400px;
 	background-color: #363434;
+	overflow-x: hidden;
 }
 
 #header{
 	width: 100%;
 	height: 40px;
-	background-color: #62929A;
+	background-color: #00adb5;
+	position: fixed;
+}
+
+#main{
+	padding-top: 40px;
+}
+
+.headerDivs{
+	float: left;
+	display: inline-block;
+	line-height: 40px;
+	text-align: center;
+}
+
+.headerButtons:hover{
+	cursor: pointer;
+	background-color: #00cdd7;
+}
+
+#headerLeft{
+	width: 250px;
+	height: 100%;
+}
+
+#editDiv{
+	width: 50px;
+	height: 100%;
+}
+
+#refreshDiv{
+	width: 50px;
+	height: 100%;
+}
+
+.headerImg{
+    vertical-align: middle;
+}
+
+#addDiv{
+	width: 50px;
+	height: 100%;
 }
 
 .button{
@@ -15,47 +57,242 @@ body{
 
 }
 
+.divs{
+	background-color: #393e46;
+	border: 1px solid #222831;
+	color: white;
+	font-size: 16px;
+	padding-left: 5px;
+	line-height: 25px;      
+}
+
 #main{
 	width: 100%;
 	height: 100%;
-	background-color: #363434;
+	background-color: #222831;
 }
 
-#nameDiv{
-	background-color: #5c5757;
+.nameDiv{
 	width: 350px;
 	height: 25px;
 	float: left;
-	border: 1px solid #363434;
-	line-height: 25px;
 	cursor: pointer;
 }
-#insVerDiv{
-	background-color: #5c5757;
+.insVerDiv{
 	width: 175px;
 	height: 25px;
 	float: left;
-	border: 1px solid #363434;
-	line-height: 25px;
-	border-bottom: 2px solid #363434;
-	cursor: pointer;
+	border-bottom: 2px solid #222831;
 }
 .curVerDiv{
-	background-color: #5c5757;
 	width: 175px;
 	height: 25px;
 	float: left;
-	border: 1px solid #363434;
-	line-height: 25px;
-	border-bottom: 2px solid #363434;
-	cursor: pointer;
+	border-bottom: 2px solid #222831;
 }
-.delDiv{
- 	background-color: #5c5757;
+.imgDiv{
 	width: 50px;
 	height: 50px;
 	float: right;
-	border: 1px solid #363434;
-	border-bottom: 2px solid #363434;
-	cursor: pointer;
+	line-height: 50px;
+	overflow: hidden;
+	font-size: 0;
+	list-style: none;
+	text-align: left;
+	box-sizing: border-box;
+	border-bottom: 2px solid #222831;
+}
+
+.sk-fading-circle {
+	margin: 0 auto;
+	width: calc(100% - 5%);
+	height: calc(100% - 5%);
+	position: relative;
+}
+
+.sk-fading-circle .sk-circle {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: calc(-7.5%);
+	top: 0;
+}
+
+.sk-fading-circle .sk-circle:before {
+	content: '';
+	display: block;
+	margin: 0 auto;
+	width: 15%;
+	height: 15%;
+	background-color: white;
+	border-radius: 100%;
+	-webkit-animation: sk-circleFadeDelay 1.2s infinite ease-in-out both;
+					animation: sk-circleFadeDelay 1.2s infinite ease-in-out both;
+}
+.sk-fading-circle .sk-circle2 {
+	-webkit-transform: rotate(30deg);
+		-ms-transform: rotate(30deg);
+			transform: rotate(30deg);
+}
+.sk-fading-circle .sk-circle3 {
+	-webkit-transform: rotate(60deg);
+		-ms-transform: rotate(60deg);
+			transform: rotate(60deg);
+}
+.sk-fading-circle .sk-circle4 {
+	-webkit-transform: rotate(90deg);
+		-ms-transform: rotate(90deg);
+			transform: rotate(90deg);
+}
+.sk-fading-circle .sk-circle5 {
+	-webkit-transform: rotate(120deg);
+		-ms-transform: rotate(120deg);
+			transform: rotate(120deg);
+}
+.sk-fading-circle .sk-circle6 {
+	-webkit-transform: rotate(150deg);
+		-ms-transform: rotate(150deg);
+			transform: rotate(150deg);
+}
+.sk-fading-circle .sk-circle7 {
+	-webkit-transform: rotate(180deg);
+		-ms-transform: rotate(180deg);
+			transform: rotate(180deg);
+}
+.sk-fading-circle .sk-circle8 {
+	-webkit-transform: rotate(210deg);
+		-ms-transform: rotate(210deg);
+			transform: rotate(210deg);
+}
+.sk-fading-circle .sk-circle9 {
+	-webkit-transform: rotate(240deg);
+		-ms-transform: rotate(240deg);
+			transform: rotate(240deg);
+}
+.sk-fading-circle .sk-circle10 {
+	-webkit-transform: rotate(270deg);
+		-ms-transform: rotate(270deg);
+			transform: rotate(270deg);
+}
+.sk-fading-circle .sk-circle11 {
+	-webkit-transform: rotate(300deg);
+		-ms-transform: rotate(300deg);
+			transform: rotate(300deg); 
+}
+.sk-fading-circle .sk-circle12 {
+	-webkit-transform: rotate(330deg);
+		-ms-transform: rotate(330deg);
+			transform: rotate(330deg); 
+}
+.sk-fading-circle .sk-circle2:before {
+	-webkit-animation-delay: -1.1s;
+			animation-delay: -1.1s; 
+}
+.sk-fading-circle .sk-circle3:before {
+	-webkit-animation-delay: -1s;
+			animation-delay: -1s; 
+}
+.sk-fading-circle .sk-circle4:before {
+	-webkit-animation-delay: -0.9s;
+			animation-delay: -0.9s; 
+}
+.sk-fading-circle .sk-circle5:before {
+	-webkit-animation-delay: -0.8s;
+			animation-delay: -0.8s; 
+}
+.sk-fading-circle .sk-circle6:before {
+	-webkit-animation-delay: -0.7s;
+			animation-delay: -0.7s; 
+}
+.sk-fading-circle .sk-circle7:before {
+	-webkit-animation-delay: -0.6s;
+			animation-delay: -0.6s; 
+}
+.sk-fading-circle .sk-circle8:before {
+	-webkit-animation-delay: -0.5s;
+			animation-delay: -0.5s; 
+}
+.sk-fading-circle .sk-circle9:before {
+	-webkit-animation-delay: -0.4s;
+			animation-delay: -0.4s;
+}
+.sk-fading-circle .sk-circle10:before {
+	-webkit-animation-delay: -0.3s;
+			animation-delay: -0.3s;
+}
+.sk-fading-circle .sk-circle11:before {
+	-webkit-animation-delay: -0.2s;
+			animation-delay: -0.2s;
+}
+.sk-fading-circle .sk-circle12:before {
+	-webkit-animation-delay: -0.1s;
+			animation-delay: -0.1s;
+}
+
+@-webkit-keyframes sk-circleFadeDelay {
+	0%, 39%, 100% { opacity: 0; }
+	40% { opacity: 1; }
+}
+
+@keyframes sk-circleFadeDelay {
+	0%, 39%, 100% { opacity: 0; }
+	40% { opacity: 1; } 
+}
+
+ /* The snackbar - position it at the bottom and in the middle of the screen */
+#snackbar {
+    visibility: hidden; /* Hidden by default. Visible on click */
+    min-width: 250px; /* Set a default minimum width */
+    margin-left: -125px; /* Divide value of min-width by 2 */
+    background-color: #333; /* Black background color */
+    color: #fff; /* White text color */
+    text-align: center; /* Centered text */
+    border-radius: 2px; /* Rounded borders */
+    padding: 16px; /* Padding */
+    position: fixed; /* Sit on top of the screen */
+    z-index: 1; /* Add a z-index if needed */
+    left: 50%; /* Center the snackbar */
+    bottom: 30px; /* 30px from the bottom */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+    visibility: visible; /* Show the snackbar */
+    /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+   However, delay the fade out process for 2.5 seconds */
+   -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+   animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+} 
+
+.goodImgs{
+	height: 100%;
+	float: right;
+	vertical-align: middle;
+}
+
+.errorImg{
+	height: 100%;
+	float: right;
+	vertical-align: middle;	
 }

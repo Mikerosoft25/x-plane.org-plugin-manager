@@ -1,215 +1,81 @@
 var regex = /<script type='application\/ld\+json'>\n({\s+"@context": "http:\/\/schema\.org",\s+"@type": "WebApplication",[\s\S]+?)<\/script>/gim;
 var plugins = [];
-var linkToggle = false;
-
-// // console.log("plugins", plugins);
-
-// function onCleared() {
-//   console.log("OK");
-// }
-
-// function onError(e) {
-//   console.log(e);
-// }
-
-// var clearStorage = browser.storage.local.clear();
-// clearStorage.then(onCleared, onError);
-
-var month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+var curVers = [];
 
 getStorage().then(function(){
-	updateDivs(plugins);
-	console.log("loaded!");	
+	addDivs(plugins, curVers);
 });
-
-function httpGet(url){
-	let xmlHttp = new XMLHttpRequest();
-	xmlHttp.open("GET", url, true);
-	xmlHttp.onreadystatechange = function () {
-		if (xmlHttp.readyState != 4) return;
-			var response = xmlHttp.responseText;
-			var arr = regex.exec(response);
-
-			var date = new Date(JSON.parse(arr[1]).dateModified);
-			var version = JSON.parse(arr[1]).softwareVersion;
-			var pluginName = JSON.parse(arr[1]).name;
-			var dateString = date.getDate() + "." + month[date.getMonth()] + "." + date.getFullYear();
-
-			pushToArray(url,pluginName,version);
-			saveStorage();
-				
-				// console.log("vers", version + " name: " + pluginName);
-				// curVers.push(version);
-				// console.log("curVers", curVers);
-				// updateDivs(plugins, curVers);
-	
-			// console.log(dateString+" , version: " + version);
-
-	};
-	xmlHttp.send();
-}
 
 function getStorage(){
 	return browser.storage.local.get("plugins").then(function(storage) {
 		if(storage.plugins){
 			plugins = storage.plugins;
-			console.log("plugins", plugins);
 		}
 	});
-}
-
-function pushToArray(url,name,version){
-	plugins.push({url: url, name: name, version: version});
 }
 
 function saveStorage(){
 	browser.storage.local.set({
 			"plugins": plugins,
 		});
-	// console.log("Saved.")
 
 	getStorage();
-	updateDivs(plugins);		
+	addDivs(plugins, curVers);	
 }
 
+function httpGet(url, callback){
+	let xmlHttp = new XMLHttpRequest();
+	xmlHttp.open("GET", url, true);
+	xmlHttp.onreadystatechange = function () {
+		if (xmlHttp.readyState != 4) return;
 
+		var response = xmlHttp.responseText;
 
-var addButton = document.getElementById('addButton');
+		for (var i = 0; i < 20 && !arr; i++) {
+			var arr = regex.exec(response);	
+		}
+		if(!arr) {
+			toast("Something went wrong!");
+			removeImgs();
+		}	
+
+		var obj = {
+			url: url,
+			name: JSON.parse(arr[1]).name,
+			version: JSON.parse(arr[1]).softwareVersion,
+			date: new Date(JSON.parse(arr[1]).dateModified)
+		}
+
+		callback(obj);
+	};
+	xmlHttp.send();
+}
+
+var addButton = document.getElementById('addDiv');
 
 if(addButton){
 	addButton.addEventListener("click", function() {
-		getTabId();
+		getTabId().then(function(url) {
+			httpGet(url, function(obj) {
+				plugins.push(obj);
+				curVers[plugins.length-1] = obj.version;
+				saveStorage();
+				addDivs(plugins, curVers);
+			});
+		});
 	});
-}
-
-var editButton = document.getElementById('editButton');
-var toggle = 0;
-
-if(editButton){
-	editButton.addEventListener("click", function() {
-		linkToggle = true;
-		if(toggle === 0){
-			toggle = 1;
-			var editImg = document.getElementById("editImg");
-			editImg.setAttribute("src", "../icons/done.svg");
-
-			addDelImgs();
-		}
-		else{
-			toggle = 0;
-			var editImg = document.getElementById("editImg");
-			editImg.setAttribute("src", "../icons/edit.svg");
-
-			linkToggle = false;
-			removeDelImgs();
-		}
-	});
-}
-
-function addDelImgs(){
-	var delDivs = document.querySelectorAll(".delDiv");
-		// console.log(delDivs);	
-		for (var i = 0; i < delDivs.length; i++) {
-			var deleteImg = document.createElement("img");
-			deleteImg.setAttribute("src", "../icons/delete.svg");
-			deleteImg.style.float = "right";
-			deleteImg.style.verticalAlign = "middle";
-			deleteImg.style.height = "100%";
-			deleteImg.classList.add("deleteImgs");
-			delDivs[i].appendChild(deleteImg);														
-			deleteImg.addEventListener("click", function(){
-				deleteRow(this.parentElement.parentElement.parentElement.getAttribute("data-id"));
-			}); 
-	}	
-}
-
-function getCurVer(){
-	var curVerDivs = document.querySelectorAll(".curVerDiv");
-	console.log("curverdivs", curVerDivs);
-	for (let i = 0; i < plugins.length; i++) {
-		curVerDivs[i].innerHTML = "loading..."
-		let xmlHttp = new XMLHttpRequest();
-		xmlHttp.open("GET", plugins[i].url, true);
-		xmlHttp.onreadystatechange = () => {
-			if (xmlHttp.readyState != 4) return;
-			// console.log("response code", xmlHttp.status);
-			
-			var response = xmlHttp.responseText;
-			var arr = reg(response);
-			var count = 0;
-			while(!arr && count < 20){
-				console.log("failed");
-				arr = reg(response);
-				count++;
-			}
-
-			// if(!arr){
-			// 	// console.log("failed", response);
-			// 	// getCurVer();
-			// 	// console.log("json", JSON.parse(arr[1]).softwareVersion);
-			// 	console.log("response", response);
-			// 	console.log("regex", regex.exec(response));
-			// 	curVerDivs[i].innerHTML = "failed... retry";
-			// 	return;
-			// }
-			
-			var version = JSON.parse(arr[1]).softwareVersion;
-			// var version = JSON.parse(regex.exec(response)[1]).softwareVersion;
-			console.log(version + ", " + plugins[i].name);
-			console.log("curVer", curVerDivs[i]);
-
-			curVerDivs[i].innerHTML = version;
-		};
-		xmlHttp.send();
-	}
-}
-
-function reg(response){
-	var arr = regex.exec(response);
-	return arr;
-}
-
-if(refreshButton){
-	refreshButton.addEventListener("click", function(){
-		getCurVer();
-		// updateDivs(plugins);
-	});
-}
-
-function removeDelImgs(){
-	[].forEach.call(document.querySelectorAll('.deleteImgs'),function(e){
-		e.parentNode.removeChild(e);
-	});	
-}
-
-function deleteRow(id){
-	plugins.splice(id, 1);
-	saveStorage();
-	addDelImgs();
 }
 
 function getTabId(){
-	function logTabs(tabs) {
-	  for (let tab of tabs) {
-	    for (var i = 0; i < plugins.length; i++) {
-	    	if(tab.url == plugins[i].url){
-	    		console.log("already exists");
-	    		return;
-	    	}
-	    }
-	    httpGet(tab.url);
-	  }
-	}
-
-	function onError(error) {
-	  console.log(`Error: ${error}`);
-	}
-
-	var querying = browser.tabs.query({currentWindow: true, active: true});
-	querying.then(logTabs, onError);
+	return browser.tabs.query({currentWindow: true, active: true}).then(function(tabs) {
+		return tabs[0].url;
+		// for (let tab of tabs) {
+		// 	return tab.url;
+		// }
+	});
 }
 
-function updateDivs(plugins){
+function addDivs(plugins, curVers){
 	var main = document.getElementById("main");
 	while(main.firstChild){
 		main.removeChild(main.firstChild)
@@ -221,48 +87,196 @@ function updateDivs(plugins){
 		var topper = document.createElement("div");
 		var footer = document.createElement("div");
 		var nameDiv = document.createElement("div");
-		var delDiv = document.createElement("div");
+		var imgDiv = document.createElement("div");
 		var insVerDiv = document.createElement("div");
 		var curVerDiv = document.createElement("div");
 
 		wrapper.setAttribute("data-id", i);
 		// console.log(wrapper.getAttribute("data-id"));
 
-		topper.id = "topper";
-		nameDiv.id = "nameDiv";
-		insVerDiv.id = "insVerDiv";
-		curVerDiv.classList.add("curVerDiv");
-		delDiv.classList.add("delDiv");
+		nameDiv.classList.add("nameDiv", "divs");
+		insVerDiv.classList.add("insVerDiv", "divs");
+		curVerDiv.classList.add("curVerDiv", "divs");
+		imgDiv.classList.add("imgDiv", "divs");
 
 		main.appendChild(wrapper);
 		wrapper.appendChild(topper);
 		wrapper.appendChild(footer);
 		topper.appendChild(nameDiv);
-		topper.appendChild(delDiv);
+		topper.appendChild(imgDiv);
 		footer.appendChild(insVerDiv);
 		footer.appendChild(curVerDiv);
 		
 		var name = plugins[i].name;
-		if(name.length > 50){
-			name = name.slice(0,50) + "...";
+		if(name.length > 40){
+			name = name.slice(0,40) + "...";
 		}
 		nameDiv.innerHTML = name;
 
 		insVerDiv.innerHTML = plugins[i].version;
+
+		if(curVers.length > 0){
+			if (typeof curVers[i] != 'undefined') {
+				curVerDiv.innerHTML = curVers[i];
+			}
+		}
 		
 		var URL = plugins[i].url;
 
-		wrapper.addEventListener("click", function(){
-			openLink(plugins[this.getAttribute("data-id")].url);
+		nameDiv.addEventListener("click", function(){
+			window.open(plugins[this.parentElement.parentElement.getAttribute("data-id")].url);
 		});
 
-		console.log("updated.")
+		if(plugins.length >= 12){
+			document.body.style.overflow = "scroll";
+			document.body.style.overflowX = "hidden";
+		}
 	}
-		
 }
 
-function openLink(url){
-	if(linkToggle == false){
-		window.open(url);	
+var refreshButton = document.getElementById('refreshDiv');
+
+if(refreshButton){
+	refreshButton.addEventListener("click", function() {
+		removeImgs();
+
+		var imgDivs = document.querySelectorAll(".imgDiv");
+
+		for (let i = 0; i < plugins.length; i++) {
+			loading(imgDivs[i]);
+			httpGet(plugins[i].url, function(obj) {	
+
+				console.log("obj", obj);
+				curVers[i] = obj.version;
+
+				addDivs(plugins, curVers);
+				checkVers();
+			});
+		}
+	});
+}
+
+var editButton = document.getElementById('editDiv');
+var toggle = true;
+
+if(editButton){
+	editButton.addEventListener("click", function(){
+		removeImgs();
+		if(toggle){
+			addDelImgs();
+			var editImg = document.getElementById("editImg");
+			editImg.setAttribute("src", "../icons/done.svg");
+			toggle = false;
+		}
+		else{
+			removeImgs();
+			var editImg = document.getElementById("editImg");
+			editImg.setAttribute("src", "../icons/edit.svg");
+			toggle = true;
+		}
+	});
+}
+
+function addDelImgs(){
+	var imgDivs = document.querySelectorAll(".imgDiv");
+		// console.log(imgDivs);	
+		for (var i = 0; i < imgDivs.length; i++) {
+			var deleteImg = document.createElement("img");
+			deleteImg.setAttribute("src", "../icons/delete.svg");
+			deleteImg.style.float = "right";
+			deleteImg.style.verticalAlign = "middle";
+			deleteImg.style.height = "100%";
+			deleteImg.classList.add("deleteImgs");
+			imgDivs[i].appendChild(deleteImg);														
+			deleteImg.addEventListener("click", function(){
+				plugins.splice(this.parentElement.parentElement.parentElement.getAttribute("data-id"), 1);
+				saveStorage();
+				addDelImgs();
+			}); 
+	}	
+}
+
+function removeImgs(){
+	var imgDivs = document.querySelectorAll(".imgDiv");
+	for (var i = 0; i < imgDivs.length; i++) {
+		while(imgDivs[i].firstChild){
+			imgDivs[i].removeChild(imgDivs[i].firstChild);
+		}
 	}
+}
+
+function loading(parent){
+	var circle = document.createElement("div");
+	circle.classList.add("sk-fading-circle", "circle");
+	var circ1 = document.createElement("div");
+	circ1.classList.add("sk-circle1", "sk-circle");
+	var circ2 = document.createElement("div");
+	circ2.classList.add("sk-circle2", "sk-circle");
+	var circ3 = document.createElement("div");
+	circ3.classList.add("sk-circle3", "sk-circle");
+	var circ4 = document.createElement("div");
+	circ4.classList.add("sk-circle4", "sk-circle");
+	var circ5 = document.createElement("div");
+	circ5.classList.add("sk-circle5", "sk-circle");
+	var circ6 = document.createElement("div");
+	circ6.classList.add("sk-circle6", "sk-circle");
+	var circ7 = document.createElement("div");
+	circ7.classList.add("sk-circle7", "sk-circle");
+	var circ8 = document.createElement("div");
+	circ8.classList.add("sk-circle8", "sk-circle");
+	var circ9 = document.createElement("div");
+	circ9.classList.add("sk-circle9", "sk-circle");
+	var circ10 = document.createElement("div");
+	circ10.classList.add("sk-circle10", "sk-circle");
+	var circ11 = document.createElement("div");
+	circ11.classList.add("sk-circle11", "sk-circle");
+	var circ12 = document.createElement("div");
+	circ12.classList.add("sk-circle12", "sk-circle");
+
+	circle.appendChild(circ1);
+	circle.appendChild(circ2);
+	circle.appendChild(circ3);
+	circle.appendChild(circ4);
+	circle.appendChild(circ5);
+	circle.appendChild(circ6);
+	circle.appendChild(circ7);
+	circle.appendChild(circ8);
+	circle.appendChild(circ9);
+	circle.appendChild(circ10);
+	circle.appendChild(circ11);
+	circle.appendChild(circ12);
+
+	parent.appendChild(circle);
+}
+
+function checkVers(){
+	var curVers = document.querySelectorAll(".insVerDiv");
+	var insVers = document.querySelectorAll(".curVerDiv");
+	var imgDivs = document.querySelectorAll(".imgDiv");
+
+	for (var i = 0; i < plugins.length; i++) {
+		if(curVers[i].innerHTML === insVers[i].innerHTML){
+			var goodImg = document.createElement("img");
+			goodImg.setAttribute("src", "../icons/good.svg");
+			goodImg.classList.add("goodImgs");
+			imgDivs[i].appendChild(goodImg);
+		}
+		else if(curVers[i].innerHTML != insVers[i].innerHTML){
+			var errorImg = document.createElement("img");
+			errorImg.setAttribute("src", "../icons/error.svg");
+			errorImg.classList.add("errorImg");
+			imgDivs[i].appendChild(errorImg);
+		}
+	}
+}
+
+function toast(text){
+	var toast = document.getElementById("snackbar");
+
+    // Add the "show" class to DIV
+    toast.className = "show";
+    toast.innerHTML = text;
+
+    // After 3 seconds, remove the show class from DIV
+    setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
 }
