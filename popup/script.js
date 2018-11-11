@@ -2,8 +2,18 @@ var regex = /<script type='application\/ld\+json'>\n({\s+"@context": "http:\/\/s
 var plugins = [];
 var curVers = [];
 
+// function onCleared() {
+//   console.log("OK");
+// }
+// function onError(e) {
+//   console.log(e);
+// }
+// var clearStorage = browser.storage.local.clear();
+// clearStorage.then(onCleared, onError);
+
 getStorage().then(function(){
 	addDivs(plugins, curVers);
+	getVersions();
 });
 
 function getStorage(){
@@ -36,7 +46,6 @@ function httpGet(url, callback){
 		}
 		if(!arr) {
 			toast("Something went wrong!");
-			removeImgs();
 		}	
 
 		var obj = {
@@ -57,21 +66,38 @@ if(addButton){
 	addButton.addEventListener("click", function() {
 		getTabId().then(function(url) {
 			httpGet(url, function(obj) {
-				plugins.push(obj);
-				curVers[plugins.length-1] = obj.version;
-				saveStorage();
-				addDivs(plugins, curVers);
+				if(!checkExists(obj)){
+					plugins.push(obj);
+					curVers[plugins.length-1] = obj.version;
+					saveStorage();
+					addDivs(plugins, curVers);
+					getVersions();	
+				}
 			});
 		});
 	});
 }
 
+function checkExists(obj){
+	for (var i = 0; i < plugins.length; i++) {
+		if(plugins[i].name == obj.name){
+			if(plugins[i].version == obj.version){
+				toast("This plugin is up to date!");
+			}
+			else{
+				plugins[i].version = obj.version;
+				saveStorage();
+				toast("plugin updated!");
+			}
+			return true;	
+		}
+	}
+	return false;
+}
+
 function getTabId(){
 	return browser.tabs.query({currentWindow: true, active: true}).then(function(tabs) {
 		return tabs[0].url;
-		// for (let tab of tabs) {
-		// 	return tab.url;
-		// }
 	});
 }
 
@@ -92,7 +118,6 @@ function addDivs(plugins, curVers){
 		var curVerDiv = document.createElement("div");
 
 		wrapper.setAttribute("data-id", i);
-		// console.log(wrapper.getAttribute("data-id"));
 
 		nameDiv.classList.add("nameDiv", "divs");
 		insVerDiv.classList.add("insVerDiv", "divs");
@@ -128,6 +153,7 @@ function addDivs(plugins, curVers){
 		});
 
 		if(plugins.length >= 12){
+			console.log(plugins.length);
 			document.body.style.overflow = "scroll";
 			document.body.style.overflowX = "hidden";
 		}
@@ -138,22 +164,24 @@ var refreshButton = document.getElementById('refreshDiv');
 
 if(refreshButton){
 	refreshButton.addEventListener("click", function() {
-		removeImgs();
-
-		var imgDivs = document.querySelectorAll(".imgDiv");
-
-		for (let i = 0; i < plugins.length; i++) {
-			loading(imgDivs[i]);
-			httpGet(plugins[i].url, function(obj) {	
-
-				console.log("obj", obj);
-				curVers[i] = obj.version;
-
-				addDivs(plugins, curVers);
-				checkVers();
-			});
-		}
+		getVersions();
 	});
+}
+
+function getVersions(){
+	removeImgs();
+
+	var imgDivs = document.querySelectorAll(".imgDiv");
+
+	for (let i = 0; i < plugins.length; i++) {
+		loading(imgDivs[i]);
+		httpGet(plugins[i].url, function(obj) {	
+			curVers[i] = obj.version;
+
+			addDivs(plugins, curVers);
+			checkVers();
+		});
+	}	
 }
 
 var editButton = document.getElementById('editDiv');
@@ -191,6 +219,7 @@ function addDelImgs(){
 			imgDivs[i].appendChild(deleteImg);														
 			deleteImg.addEventListener("click", function(){
 				plugins.splice(this.parentElement.parentElement.parentElement.getAttribute("data-id"), 1);
+				curVers.splice(this.parentElement.parentElement.parentElement.getAttribute("data-id"), 1);
 				saveStorage();
 				addDelImgs();
 			}); 
@@ -251,18 +280,19 @@ function loading(parent){
 }
 
 function checkVers(){
-	var curVers = document.querySelectorAll(".insVerDiv");
-	var insVers = document.querySelectorAll(".curVerDiv");
+	var curVerDivs = document.querySelectorAll(".insVerDiv");
+	var insVerDivs = document.querySelectorAll(".curVerDiv");
 	var imgDivs = document.querySelectorAll(".imgDiv");
 
 	for (var i = 0; i < plugins.length; i++) {
-		if(curVers[i].innerHTML === insVers[i].innerHTML){
+		if(curVerDivs[i].innerHTML === insVerDivs[i].innerHTML){
 			var goodImg = document.createElement("img");
 			goodImg.setAttribute("src", "../icons/good.svg");
 			goodImg.classList.add("goodImgs");
 			imgDivs[i].appendChild(goodImg);
 		}
-		else if(curVers[i].innerHTML != insVers[i].innerHTML){
+		else if(curVerDivs[i].innerHTML != insVerDivs[i].innerHTML && curVers[i]){
+			console.log("cur", curVers[i]);
 			var errorImg = document.createElement("img");
 			errorImg.setAttribute("src", "../icons/error.svg");
 			errorImg.classList.add("errorImg");
@@ -274,10 +304,8 @@ function checkVers(){
 function toast(text){
 	var toast = document.getElementById("snackbar");
 
-    // Add the "show" class to DIV
     toast.className = "show";
     toast.innerHTML = text;
 
-    // After 3 seconds, remove the show class from DIV
     setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
 }
