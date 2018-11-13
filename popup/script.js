@@ -1,6 +1,8 @@
 var regex = /<script type='application\/ld\+json'>\n({\s+"@context": "http:\/\/schema\.org",\s+"@type": "WebApplication",[\s\S]+?)<\/script>/gim;
 var plugins = [];
 var curVers = [];
+var pluginsTemp = [];
+var curVersTemp = [];
 
 // function onCleared() {
 //   console.log("OK");
@@ -20,6 +22,7 @@ function getStorage(){
 	return browser.storage.local.get("plugins").then(function(storage) {
 		if(storage.plugins){
 			plugins = storage.plugins;
+			pluginsTemp = storage.plugins;
 		}
 	});
 }
@@ -109,6 +112,7 @@ function addDivs(plugins, curVers){
 
 	for (var i = 0; i < plugins.length; i++) {
 		
+
 		var wrapper = document.createElement("div");
 		var topper = document.createElement("div");
 		var footer = document.createElement("div");
@@ -117,6 +121,7 @@ function addDivs(plugins, curVers){
 		var insVerDiv = document.createElement("div");
 		var curVerDiv = document.createElement("div");
 
+		
 		wrapper.setAttribute("data-id", i);
 
 		nameDiv.classList.add("nameDiv", "divs");
@@ -124,6 +129,7 @@ function addDivs(plugins, curVers){
 		curVerDiv.classList.add("curVerDiv", "divs");
 		imgDiv.classList.add("imgDiv", "divs");
 
+		
 		main.appendChild(wrapper);
 		wrapper.appendChild(topper);
 		wrapper.appendChild(footer);
@@ -131,18 +137,18 @@ function addDivs(plugins, curVers){
 		topper.appendChild(imgDiv);
 		footer.appendChild(insVerDiv);
 		footer.appendChild(curVerDiv);
-		
+
 		var name = plugins[i].name;
 		if(name.length > 40){
 			name = name.slice(0,40) + "...";
 		}
-		nameDiv.innerHTML = name;
+		nameDiv.innerText = name;
 
-		insVerDiv.innerHTML = plugins[i].version;
+		insVerDiv.innerText = plugins[i].version;
 
 		if(curVers.length > 0){
 			if (typeof curVers[i] != 'undefined') {
-				curVerDiv.innerHTML = curVers[i];
+				curVerDiv.innerText = curVers[i];
 			}
 		}
 		
@@ -151,9 +157,10 @@ function addDivs(plugins, curVers){
 		nameDiv.addEventListener("click", function(){
 			window.open(plugins[this.parentElement.parentElement.getAttribute("data-id")].url);
 		});
+		
 
 		if(plugins.length >= 12){
-			console.log(plugins.length);
+			// console.log(plugins.length);
 			document.body.style.overflow = "scroll";
 			document.body.style.overflowX = "hidden";
 		}
@@ -164,6 +171,7 @@ var refreshButton = document.getElementById('refreshDiv');
 
 if(refreshButton){
 	refreshButton.addEventListener("click", function() {
+		input.value = "";
 		getVersions();
 	});
 }
@@ -181,7 +189,8 @@ function getVersions(){
 			addDivs(plugins, curVers);
 			checkVers();
 		});
-	}	
+	}
+	curVersTemp = curVers;	
 }
 
 var editButton = document.getElementById('editDiv');
@@ -190,6 +199,7 @@ var toggle = true;
 if(editButton){
 	editButton.addEventListener("click", function(){
 		removeImgs();
+		input.value = "";
 		if(toggle){
 			addDelImgs();
 			var editImg = document.getElementById("editImg");
@@ -204,6 +214,33 @@ if(editButton){
 			checkVers();
 		}
 	});
+}
+
+var input = document.getElementById('inputField');
+
+if(input){
+	input.addEventListener("input", function(){
+		var inputText = input.value;
+		getSearch(inputText);
+		plugins = pluginsTemp;
+		curVers = curVersTemp;
+	});	
+}
+
+function getSearch(input){
+	var plugArr = [];
+	var verArr = [];
+	for (var i = 0; i < plugins.length; i++) {
+		if(plugins[i].name.toLowerCase().includes(input)){
+			plugArr.push(plugins[i]);
+			verArr.push(curVers[i]);
+			// console.log("plug", plugins[i], "cur", curVers[i]);
+		}
+	}
+	plugins = plugArr;
+	curVers = verArr;
+	addDivs(plugins, curVers);
+	checkVers();
 }
 
 function addDelImgs(){
@@ -285,14 +322,14 @@ function checkVers(){
 	var imgDivs = document.querySelectorAll(".imgDiv");
 
 	for (var i = 0; i < plugins.length; i++) {
-		if(curVerDivs[i].innerHTML === insVerDivs[i].innerHTML){
+		if(curVerDivs[i].innerText === insVerDivs[i].innerText){
 			var goodImg = document.createElement("img");
 			goodImg.setAttribute("src", "../icons/good.svg");
 			goodImg.classList.add("goodImgs");
 			imgDivs[i].appendChild(goodImg);
 		}
-		else if(curVerDivs[i].innerHTML != insVerDivs[i].innerHTML && curVers[i]){
-			console.log("cur", curVers[i]);
+		else if(curVerDivs[i].innerText != insVerDivs[i].innerText && curVers[i]){
+			// console.log("cur", curVers[i]);
 			var errorImg = document.createElement("img");
 			errorImg.setAttribute("src", "../icons/error.svg");
 			errorImg.classList.add("errorImg");
@@ -305,7 +342,7 @@ function toast(text){
 	var toast = document.getElementById("snackbar");
 
     toast.className = "show";
-    toast.innerHTML = text;
+    toast.innerText = text;
 
     setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
 }
