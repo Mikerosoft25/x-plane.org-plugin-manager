@@ -4,36 +4,38 @@ var curVers = [];
 var pluginsTemp = [];
 var curVersTemp = [];
 
-// function onCleared() {
-//   console.log("OK");
-// }
-// function onError(e) {
-//   console.log(e);
-// }
-// var clearStorage = browser.storage.local.clear();
-// clearStorage.then(onCleared, onError);
-
 getStorage().then(function(){
-	addDivs(plugins, curVers);
-	getVersions();
+	pluginsTemp = plugins.slice();
+	curVersTemp = curVers.slice();
+	populateDivs(pluginsTemp, curVersTemp);
+	getCurrentVersions();
+
+	for (var i = 0; i < plugins.length; i++) {
+		checkVers(i);
+	}
 });
 
 function getStorage(){
 	return browser.storage.local.get("plugins").then(function(storage) {
 		if(storage.plugins){
 			plugins = storage.plugins;
-			pluginsTemp = storage.plugins;
+			pluginsTemp = plugins.slice();
 		}
 	});
 }
 
 function saveStorage(){
+	for (var i = 0; i < plugins.length; i++) {
+		plugins[i].id = i;
+	}
+
 	browser.storage.local.set({
 			"plugins": plugins,
 		});
 
 	getStorage();
-	addDivs(plugins, curVers);	
+	curVersTemp = curVers.slice();
+	populateDivs(pluginsTemp, curVersTemp);
 }
 
 function httpGet(url, callback){
@@ -44,9 +46,9 @@ function httpGet(url, callback){
 
 		var response = xmlHttp.responseText;
 
-		for (var i = 0; i < 20 && !arr; i++) {
-			var arr = regex.exec(response);	
-		}
+		regex.lastIndex = null;
+		var arr = regex.exec(response);
+
 		if(!arr) {
 			toast("Something went wrong!");
 		}	
@@ -55,7 +57,8 @@ function httpGet(url, callback){
 			url: url,
 			name: JSON.parse(arr[1]).name,
 			version: JSON.parse(arr[1]).softwareVersion,
-			date: new Date(JSON.parse(arr[1]).dateModified)
+			date: new Date(JSON.parse(arr[1]).dateModified),
+			id: plugins.length
 		}
 
 		callback(obj);
@@ -68,13 +71,14 @@ var addButton = document.getElementById('addDiv');
 if(addButton){
 	addButton.addEventListener("click", function() {
 		getTabId().then(function(url) {
+			toast("Adding plugin to list...");
 			httpGet(url, function(obj) {
 				if(!checkExists(obj)){
 					plugins.push(obj);
 					curVers[plugins.length-1] = obj.version;
 					saveStorage();
-					addDivs(plugins, curVers);
-					getVersions();	
+					addDiv(obj, curVers[plugins.length-1]);
+					getCurrentVersions();	
 				}
 			});
 		});
@@ -104,7 +108,7 @@ function getTabId(){
 	});
 }
 
-function addDivs(plugins, curVers){
+function populateDivs(plugins, curVers){
 	var main = document.getElementById("main");
 	while(main.firstChild){
 		main.removeChild(main.firstChild)
@@ -112,7 +116,6 @@ function addDivs(plugins, curVers){
 
 	for (var i = 0; i < plugins.length; i++) {
 		
-
 		var wrapper = document.createElement("div");
 		var topper = document.createElement("div");
 		var footer = document.createElement("div");
@@ -122,8 +125,9 @@ function addDivs(plugins, curVers){
 		var curVerDiv = document.createElement("div");
 
 		
-		wrapper.setAttribute("data-id", i);
+		wrapper.setAttribute("data-id", plugins[i].id);
 
+		wrapper.classList.add("wrapper");
 		nameDiv.classList.add("nameDiv", "divs");
 		insVerDiv.classList.add("insVerDiv", "divs");
 		curVerDiv.classList.add("curVerDiv", "divs");
@@ -160,10 +164,85 @@ function addDivs(plugins, curVers){
 		
 
 		if(plugins.length >= 12){
-			// console.log(plugins.length);
 			document.body.style.overflow = "scroll";
 			document.body.style.overflowX = "hidden";
 		}
+
+	}
+	if(showDelImgs){
+		removeImgs();
+		addDelImgs();
+	}
+}
+
+function addDiv(plugin, curVersion){
+	var main = document.getElementById("main");
+
+	var wrapper = document.createElement("div");
+	var topper = document.createElement("div");
+	var footer = document.createElement("div");
+	var nameDiv = document.createElement("div");
+	var imgDiv = document.createElement("div");
+	var insVerDiv = document.createElement("div");
+	var curVerDiv = document.createElement("div");
+	
+	wrapper.setAttribute("data-id", plugin.id);
+
+	wrapper.classList.add("wrapper");
+	nameDiv.classList.add("nameDiv", "divs");
+	insVerDiv.classList.add("insVerDiv", "divs");
+	curVerDiv.classList.add("curVerDiv", "divs");
+	imgDiv.classList.add("imgDiv", "divs");
+
+		
+	main.appendChild(wrapper);
+	wrapper.appendChild(topper);
+	wrapper.appendChild(footer);
+	topper.appendChild(nameDiv);
+	topper.appendChild(imgDiv);
+	footer.appendChild(insVerDiv);
+	footer.appendChild(curVerDiv);
+
+	var name = plugin.name;
+	if(name.length > 40){
+		name = name.slice(0,40) + "...";
+	}
+	nameDiv.innerText = name;
+
+	insVerDiv.innerText = plugin.version;
+
+	if(curVers.length > 0){
+		if (typeof curVersion != 'undefined') {
+			curVerDiv.innerText = curVersion;
+		}
+	}
+	
+	var URL = plugin.url;
+	nameDiv.addEventListener("click", function(){
+		window.open(plugins[this.parentElement.parentElement.getAttribute("data-id")].url);
+	});
+		
+
+	if(plugins.length >= 12){
+		document.body.style.overflow = "scroll";
+		document.body.style.overflowX = "hidden";
+	}
+}
+
+function updateDiv(name, insVer, curVer, id){
+	var divs = document.querySelectorAll(".wrapper");
+	var nameDiv = divs[id].children[0].children[0];
+	var imgDiv = divs[id].children[0].children[1];
+	var insVerDiv = divs[id].children[1].children[0];
+	var curVerDiv = divs[id].children[1].children[1];
+
+	nameDiv.innerText = name;
+	insVerDiv.innerText = insVer;
+	curVerDiv.innerText = curVer;
+	imgDiv.innerText = "";
+	checkVers(id);
+	if (showDelImgs) {
+		addDelImgs();
 	}
 }
 
@@ -171,47 +250,50 @@ var refreshButton = document.getElementById('refreshDiv');
 
 if(refreshButton){
 	refreshButton.addEventListener("click", function() {
-		input.value = "";
-		getVersions();
+		getCurrentVersions();
 	});
 }
 
-function getVersions(){
-	removeImgs();
+function getCurrentVersions(){
 
 	var imgDivs = document.querySelectorAll(".imgDiv");
+	removeImgs();
 
 	for (let i = 0; i < plugins.length; i++) {
 		loading(imgDivs[i]);
 		httpGet(plugins[i].url, function(obj) {	
 			curVers[i] = obj.version;
 
-			addDivs(plugins, curVers);
-			checkVers();
+			updateDiv(plugins[i].name, plugins[i].version, curVers[i], i);
 		});
 	}
-	curVersTemp = curVers;	
+	curVersTemp = curVers.slice();	
 }
 
 var editButton = document.getElementById('editDiv');
 var toggle = true;
+var showDelImgs = false;
 
 if(editButton){
 	editButton.addEventListener("click", function(){
 		removeImgs();
-		input.value = "";
 		if(toggle){
 			addDelImgs();
 			var editImg = document.getElementById("editImg");
 			editImg.setAttribute("src", "../icons/done.svg");
 			toggle = false;
+			showDelImgs = true;
 		}
 		else{
 			removeImgs();
 			var editImg = document.getElementById("editImg");
 			editImg.setAttribute("src", "../icons/edit.svg");
 			toggle = true;
-			checkVers();
+			showDelImgs = false;
+			// getCurrentVersions();
+			for (var i = 0; i < plugins.length; i++) {
+				checkVers(i);
+			}
 		}
 	});
 }
@@ -222,8 +304,8 @@ if(input){
 	input.addEventListener("input", function(){
 		var inputText = input.value;
 		getSearch(inputText);
-		plugins = pluginsTemp;
-		curVers = curVersTemp;
+		pluginsTemp = plugins.slice();
+		curVersTemp = curVers.slice();
 	});	
 }
 
@@ -234,32 +316,40 @@ function getSearch(input){
 		if(plugins[i].name.toLowerCase().includes(input)){
 			plugArr.push(plugins[i]);
 			verArr.push(curVers[i]);
-			// console.log("plug", plugins[i], "cur", curVers[i]);
 		}
 	}
-	plugins = plugArr;
-	curVers = verArr;
-	addDivs(plugins, curVers);
-	checkVers();
+	pluginsTemp = plugArr.slice();
+	curVersTemp = verArr.slice();
+	populateDivs(pluginsTemp, curVersTemp);
+	if(!showDelImgs){
+		for (var i = 0; i < plugins.length; i++) {
+			checkVers(i);
+		}		
+	}
 }
 
 function addDelImgs(){
 	var imgDivs = document.querySelectorAll(".imgDiv");
-		// console.log(imgDivs);	
-		for (var i = 0; i < imgDivs.length; i++) {
-			var deleteImg = document.createElement("img");
-			deleteImg.setAttribute("src", "../icons/delete.svg");
-			deleteImg.style.float = "right";
-			deleteImg.style.verticalAlign = "middle";
-			deleteImg.style.height = "100%";
-			deleteImg.classList.add("deleteImgs");
-			imgDivs[i].appendChild(deleteImg);														
-			deleteImg.addEventListener("click", function(){
-				plugins.splice(this.parentElement.parentElement.parentElement.getAttribute("data-id"), 1);
-				curVers.splice(this.parentElement.parentElement.parentElement.getAttribute("data-id"), 1);
-				saveStorage();
-				addDelImgs();
-			}); 
+	var input = document.getElementById('inputField');
+
+	for (var i = 0; i < imgDivs.length; i++) {
+		var deleteImg = document.createElement("img");
+		deleteImg.setAttribute("src", "../icons/delete.svg");
+		deleteImg.style.float = "right";
+		deleteImg.style.verticalAlign = "middle";
+		deleteImg.style.height = "100%";
+		deleteImg.classList.add("deleteImgs");
+		imgDivs[i].appendChild(deleteImg);														
+		deleteImg.addEventListener("click", function(){
+			plugins.splice(this.parentElement.parentElement.parentElement.getAttribute("data-id"), 1);
+			curVers.splice(this.parentElement.parentElement.parentElement.getAttribute("data-id"), 1);
+
+			curVersTemp.splice(this.parentElement.parentElement.parentElement.getAttribute("data-id"), 1);
+			pluginsTemp.splice(this.parentElement.parentElement.parentElement.getAttribute("data-id"), 1);
+
+			saveStorage();
+			getSearch(input.value);
+		}); 
 	}	
 }
 
@@ -316,25 +406,25 @@ function loading(parent){
 	parent.appendChild(circle);
 }
 
-function checkVers(){
-	var curVerDivs = document.querySelectorAll(".insVerDiv");
-	var insVerDivs = document.querySelectorAll(".curVerDiv");
-	var imgDivs = document.querySelectorAll(".imgDiv");
+function checkVers(id){
+	var divs = document.querySelectorAll(".wrapper");
+	if(divs[id]){
+		var imgDiv = divs[id].children[0].children[1];
+		var insVerDiv = divs[id].children[1].children[0];
+		var curVerDiv = divs[id].children[1].children[1];
 
-	for (var i = 0; i < plugins.length; i++) {
-		if(curVerDivs[i].innerText === insVerDivs[i].innerText){
+		if(insVerDiv.innerText === curVerDiv.innerText){
 			var goodImg = document.createElement("img");
 			goodImg.setAttribute("src", "../icons/good.svg");
 			goodImg.classList.add("goodImgs");
-			imgDivs[i].appendChild(goodImg);
+			imgDiv.appendChild(goodImg);				
 		}
-		else if(curVerDivs[i].innerText != insVerDivs[i].innerText && curVers[i]){
-			// console.log("cur", curVers[i]);
+		else if(insVerDiv.innerText != curVerDiv.innerText && curVers[id]){
 			var errorImg = document.createElement("img");
 			errorImg.setAttribute("src", "../icons/error.svg");
 			errorImg.classList.add("errorImg");
-			imgDivs[i].appendChild(errorImg);
-		}
+			imgDiv.appendChild(errorImg);
+		}		
 	}
 }
 

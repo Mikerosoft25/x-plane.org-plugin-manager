@@ -281,7 +281,7 @@ body{
 
 @keyframes fadein {
     from {top: 550px; opacity: 0;}
-    to {top: 520px; opacity: 1;}top
+    to {top: 520px; opacity: 1;}
 }
 
 @-webkit-keyframes fadeout {

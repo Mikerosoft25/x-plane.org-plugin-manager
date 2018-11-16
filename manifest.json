@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "X-Plane plugin manager",
-  "version": "0.7.1",
+  "version": "0.8.0",
 
   "description": "forums.x-plane.org plugin manager",
   "homepage_url": "https://github.com/Mikerosoft25/plugin-manager",
