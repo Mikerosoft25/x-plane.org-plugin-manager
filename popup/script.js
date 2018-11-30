@@ -202,7 +202,7 @@ function addDiv(plugin, curVersion){
 
 	var name = plugin.name;
 	if(name.length > 40){
-		name = name.slice(0,40) + "...";
+		name = name.slice(0,40) + " ...";
 	}
 	nameDiv.innerText = name;
 
@@ -235,6 +235,9 @@ function updateDiv(name, insVer, curVer, id){
 		var insVerDiv = divs[id].children[1].children[0];
 		var curVerDiv = divs[id].children[1].children[1];
 
+		if(name.length > 40){
+			name = name.slice(0,40) + " ...";
+		}
 		nameDiv.innerText = name;
 		insVerDiv.innerText = insVer;
 		curVerDiv.innerText = curVer;
@@ -263,11 +266,12 @@ if(refreshButton){
 function getCurrentVersions(){
 	var imgDivs = document.querySelectorAll(".imgDiv");
 	var input = document.getElementById('inputField');
-	removeImgs();
 
 	var editImg = document.getElementById("editImg");
 	editImg.setAttribute("src", "../icons/edit.svg");
 	toggle = true;
+	removeImgs();
+	showDelImgs = false;
 
 	for (let i = 0; i < plugins.length; i++) {
 		loading(imgDivs[i]);
