@@ -98,7 +98,8 @@ function checkExists(obj){
 				removeSpinner();
 				plugins[i].version = obj.version;
 				saveStorage();
-				toast("plugin updated!");
+				getCurrentVersions();
+				toast("Plugin updated");
 			}
 			return true;	
 		}
@@ -164,11 +165,6 @@ function populateDivs(plugins, curVers){
 		nameDiv.addEventListener("click", function(){
 			window.open(pluginsTemp[this.parentElement.parentElement.getAttribute("data-id")].url);
 		});
-		
-		if(plugins.length >= 12){
-			document.body.style.overflow = "scroll";
-			document.body.style.overflowX = "hidden";
-		}
 	}
 	if(showDelImgs){
 		removeImgs();
@@ -255,7 +251,12 @@ var refreshButton = document.getElementById('refreshDiv');
 
 if(refreshButton){
 	refreshButton.addEventListener("click", function() {
-		getCurrentVersions();
+		if(plugins.length > 0){
+			getCurrentVersions();
+		}
+		else{
+			toast("No plugins to refresh!")
+		}
 	});
 }
 
@@ -288,24 +289,35 @@ var showDelImgs = false;
 
 if(editButton){
 	editButton.addEventListener("click", function(){
-		removeImgs();
-		if(toggle){
-			addDelImgs();
-			var editImg = document.getElementById("editImg");
-			editImg.setAttribute("src", "../icons/done.svg");
-			toggle = false;
-			showDelImgs = true;
-		}
-		else{
+		if(plugins.length > 0){
 			removeImgs();
+			if(toggle){
+				addDelImgs();
+				var editImg = document.getElementById("editImg");
+				editImg.setAttribute("src", "../icons/done.svg");
+				toggle = false;
+				showDelImgs = true;
+			}
+			else{
+				removeImgs();
+				var editImg = document.getElementById("editImg");
+				editImg.setAttribute("src", "../icons/edit.svg");
+				toggle = true;
+				showDelImgs = false;
+				for (var i = 0; i < plugins.length; i++) {
+					checkVers(i);
+				}
+			}		
+		}
+		else if(plugins.length <= 0 && !toggle){
 			var editImg = document.getElementById("editImg");
 			editImg.setAttribute("src", "../icons/edit.svg");
 			toggle = true;
 			showDelImgs = false;
-			for (var i = 0; i < plugins.length; i++) {
-				checkVers(i);
-			}
-		}		
+		}
+		else{
+			toast("There is nothing to edit!");
+		}
 	});
 }
 
