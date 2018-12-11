@@ -217,14 +217,10 @@ function addDiv(plugin, curVersion){
 	var URL = plugin.url;
 	nameDiv.addEventListener("click", function(){
 		window.open(pluginsTemp[this.parentElement.parentElement.getAttribute("data-id")].url);
-		// console.log(this.parentElement.parentElement.getAttribute("data-id");
 	});
-		
 
-	if(plugins.length >= 12){
-		document.body.style.overflow = "scroll";
-		document.body.style.overflowX = "hidden";
-	}
+	main.scrollTop = main.scrollHeight;
+
 }
 
 function updateDiv(name, insVer, curVer, id){
