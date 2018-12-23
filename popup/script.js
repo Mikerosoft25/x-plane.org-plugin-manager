@@ -148,7 +148,8 @@ function populateDivs(plugins, curVers){
 
 		var name = plugins[i].name;
 		if(name.length > 40){
-			name = name.slice(0,40) + "...";
+			nameDiv.setAttribute("title", name);
+			name = name.slice(0,40) + " ...";
 		}
 		nameDiv.innerText = name;
 
@@ -202,6 +203,7 @@ function addDiv(plugin, curVersion){
 
 	var name = plugin.name;
 	if(name.length > 40){
+		nameDiv.setAttribute("title", name);
 		name = name.slice(0,40) + " ...";
 	}
 	nameDiv.innerText = name;
