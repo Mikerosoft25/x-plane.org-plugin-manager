@@ -73,7 +73,7 @@ if(addButton){
 	addButton.addEventListener("click", function() {
 		addSpinner();
 		getTabId().then(function(url) {
-			httpGet(url, function(obj) {
+			httpGet(url[0], function(obj) {
 				document.getElementById('inputField').value = "";
 				if(!checkExists(obj)){
 					plugins.push(obj);
@@ -90,26 +90,28 @@ if(addButton){
 function checkExists(obj){
 	for (var i = 0; i < plugins.length; i++) {
 		if(plugins[i].name == obj.name){
-			if(plugins[i].version == obj.version){
-				removeSpinner();
-				toast("This plugin is up to date!");
-			}
-			else{
-				removeSpinner();
-				plugins[i].version = obj.version;
-				saveStorage();
-				getCurrentVersions();
-				toast("Plugin updated");
-			}
+			// if(plugins[i].version == obj.version){
+			// 	removeSpinner();
+			// 	toast("This plugin is up to date!");
+			// }
+			// else{
+			// 	removeSpinner();
+			// 	plugins[i].version = obj.version;
+			// 	saveStorage();
+			// 	getCurrentVersions();
+			// 	toast("Plugin updated");
+			// }
+			removeSpinner();
+			toast("This plugin is already in your list!");
 			return true;	
 		}
 	}
 	return false;
 }
 
-function getTabId(){
+function getTabId(url){
 	return browser.tabs.query({currentWindow: true, active: true}).then(function(tabs) {
-		return tabs[0].url;
+		return [tabs[0].url,url];
 	});
 }
 
@@ -136,7 +138,6 @@ function populateDivs(plugins, curVers){
 		insVerDiv.classList.add("insVerDiv", "divs");
 		curVerDiv.classList.add("curVerDiv", "divs");
 		imgDiv.classList.add("imgDiv", "divs");
-
 		
 		main.appendChild(wrapper);
 		wrapper.appendChild(topper);
@@ -165,6 +166,10 @@ function populateDivs(plugins, curVers){
 
 		nameDiv.addEventListener("click", function(){
 			window.open(pluginsTemp[this.parentElement.parentElement.getAttribute("data-id")].url);
+			removeImgs();
+			for (var i = 0; i < plugins.length; i++) {
+				checkVers(i,pluginsTemp[this.parentElement.parentElement.getAttribute("data-id")].url);
+			}
 		});
 	}
 	if(showDelImgs){
@@ -192,7 +197,6 @@ function addDiv(plugin, curVersion){
 	curVerDiv.classList.add("curVerDiv", "divs");
 	imgDiv.classList.add("imgDiv", "divs");
 
-		
 	main.appendChild(wrapper);
 	wrapper.appendChild(topper);
 	wrapper.appendChild(footer);
@@ -210,6 +214,7 @@ function addDiv(plugin, curVersion){
 
 	insVerDiv.innerText = plugin.version;
 
+
 	if(curVers.length > 0){
 		if (typeof curVersion != 'undefined') {
 			curVerDiv.innerText = curVersion;
@@ -219,6 +224,10 @@ function addDiv(plugin, curVersion){
 	var URL = plugin.url;
 	nameDiv.addEventListener("click", function(){
 		window.open(pluginsTemp[this.parentElement.parentElement.getAttribute("data-id")].url);
+		removeImgs();
+		for (var i = 0; i < plugins.length; i++) {
+			checkVers(i,pluginsTemp[this.parentElement.parentElement.getAttribute("data-id")].url);
+		}
 	});
 
 	main.scrollTop = main.scrollHeight;
@@ -238,6 +247,33 @@ function updateDiv(name, insVer, curVer, id){
 		}
 		nameDiv.innerText = name;
 		insVerDiv.innerText = insVer;
+		// insVerDiv.innerText = "test";
+		//-> for simulating installed version
+		curVerDiv.innerText = curVer;
+		imgDiv.innerText = "";
+		checkVers(id);
+		if (showDelImgs) {
+			removeImgs();
+			addDelImgs();
+		}
+	}
+}
+
+function updateDiv2(name, insVer, curVer, id){
+	var divs = document.querySelectorAll(".wrapper");
+	if(divs[id]){
+		var nameDiv = divs[id].children[0].children[0];
+		var imgDiv = divs[id].children[0].children[1];
+		var insVerDiv = divs[id].children[1].children[0];
+		var curVerDiv = divs[id].children[1].children[1];
+
+		if(name.length > 40){
+			name = name.slice(0,40) + " ...";
+		}
+		nameDiv.innerText = name;
+		insVerDiv.innerText = insVer;
+		// insVerDiv.innerText = "test";
+		//-> for simulating installed version
 		curVerDiv.innerText = curVer;
 		imgDiv.innerText = "";
 		checkVers(id);
@@ -434,7 +470,7 @@ function loading(parent){
 	}
 }
 
-function checkVers(id){
+function checkVers(id,url){
 	var divs = document.querySelectorAll(".wrapper");
 	if(divs[id]){
 		var imgDiv = divs[id].children[0].children[1];
@@ -449,10 +485,43 @@ function checkVers(id){
 			imgDiv.appendChild(goodImg);				
 		}
 		else if(insVerDiv.innerText != curVerDiv.innerText && curVers[id] && toggle){
-			var errorImg = document.createElement("img");
-			errorImg.setAttribute("src", "../icons/error.svg");
-			errorImg.classList.add("errorImg");
-			imgDiv.appendChild(errorImg);
+			if (typeof url === 'undefined') { 
+				url = plugins[id].url;
+				getTabId(url).then(function(result){
+					if(result[0] == result[1]){
+						var updateImg = document.createElement("img");
+						updateImg.setAttribute("src", "../icons/updateVersion.svg");
+						updateImg.classList.add("updateImg");
+						updateImg.addEventListener("click", function(){
+							updateDiv2(plugins[id].name,plugins[id].version,plugins[id].version,plugins[id].id);
+						});
+						imgDiv.appendChild(updateImg);
+					}
+					else{
+						var errorImg = document.createElement("img");
+						errorImg.setAttribute("src", "../icons/error.svg");
+						errorImg.classList.add("errorImg");
+						imgDiv.appendChild(errorImg);
+					}
+				});	
+			}
+			else{
+				if(url == plugins[id].url){
+					var updateImg = document.createElement("img");
+					updateImg.setAttribute("src", "../icons/updateVersion.svg");
+					updateImg.classList.add("updateImg");
+					updateImg.addEventListener("click", function(){
+						updateDiv2(plugins[id].name,plugins[id].version,plugins[id].version,plugins[id].id);
+					});
+					imgDiv.appendChild(updateImg);		
+				}
+				else{
+					var errorImg = document.createElement("img");
+					errorImg.setAttribute("src", "../icons/error.svg");
+					errorImg.classList.add("errorImg");
+					imgDiv.appendChild(errorImg);
+				}
+			}	
 		}		
 	}
 }

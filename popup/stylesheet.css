@@ -76,6 +76,10 @@ body{
 	cursor: pointer;	
 }
 
+.updateImg{
+	cursor: pointer;
+}
+
 .divs{
 	background-color: #393e46;
 	border: 1px solid #222831;
@@ -308,6 +312,13 @@ body{
 	height: 100%;
 	float: right;
 	vertical-align: middle;	
+}
+
+.updateImg{
+	height: 100%;
+	float: right;
+	vertical-align: middle;	
+	cursor: pointer;
 }
 
 .spinner {
