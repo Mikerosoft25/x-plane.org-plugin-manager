@@ -1,8 +1,13 @@
+* {
+	box-sizing: inherit;
+}
+
 body{
-	height: 600px;
+	height: 560px;
 	width: 400px;
 	background-color: #222831;
 	overflow: hidden;
+	box-sizing: border-box;
 }
 
 #header{
@@ -90,12 +95,12 @@ body{
 }
 
 .nameDiv{
-	width: 350px;
 	width: 87.5%;
 	height: 25px;
 	float: left;
 	cursor: pointer;
 }
+
 .insVerDiv{
 	width: 43.75%;
 	height: 25px;

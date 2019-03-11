@@ -3,13 +3,15 @@
 	<head>
 		<title></title>
 		<link rel="stylesheet" type="text/css" href="stylesheet.css">
+		<link rel="stylesheet" type="text/css" href="../node_modules/normalize.css/normalize.css">
 		<meta charset="utf-8">
-		<script defer type="text/javascript" src="script.js"></script>
+		<script type="application/javascript" src="../node_modules/webextension-polyfill/dist/browser-polyfill.js"></script>
+		<script defer type="text/javascript" src="./script.js"></script>
 	</head>
 	<body>
 		<div id="header">
 			<div id="headerLeft" class="headerDivs"><input id="inputField" type="" name="" placeholder="Search your plugins..."></div>
-			<div id="editDiv" class="headerDivs headerButtons"><img class="headerImg" id="editImg" src="../icons/pen.svg"></div>
+			<div id="editDiv" class="headerDivs headerButtons"><img class="headerImg" id="editImg" src="../icons/edit.svg"></div>
 			<div id="refreshDiv" class="headerDivs headerButtons"><img class="headerImg" src="../icons/refresh.svg"></div>
 			<div id="addDiv" class="headerDivs headerButtons"><img class="headerImg"  src="../icons/add.svg"></div>
 		</div>

@@ -30,8 +30,8 @@ function saveStorage(){
 	}
 
 	browser.storage.local.set({
-			"plugins": plugins,
-		});
+		"plugins": plugins,
+	});
 
 	getStorage();
 	curVersTemp = curVers.slice();
@@ -259,30 +259,6 @@ function updateDiv(name, insVer, curVer, id){
 	}
 }
 
-function updateDiv2(name, insVer, curVer, id){
-	var divs = document.querySelectorAll(".wrapper");
-	if(divs[id]){
-		var nameDiv = divs[id].children[0].children[0];
-		var imgDiv = divs[id].children[0].children[1];
-		var insVerDiv = divs[id].children[1].children[0];
-		var curVerDiv = divs[id].children[1].children[1];
-
-		if(name.length > 40){
-			name = name.slice(0,40) + " ...";
-		}
-		nameDiv.innerText = name;
-		insVerDiv.innerText = insVer;
-		// insVerDiv.innerText = "test";
-		//-> for simulating installed version
-		curVerDiv.innerText = curVer;
-		imgDiv.innerText = "";
-		checkVers(id);
-		if (showDelImgs) {
-			removeImgs();
-			addDelImgs();
-		}
-	}
-}
 
 var refreshButton = document.getElementById('refreshDiv');
 
@@ -385,7 +361,7 @@ function getSearch(){
 	curVersTemp = verArr.slice();
 	populateDivs(pluginsTemp, curVersTemp);
 	if(!showDelImgs){
-		for (var i = 0; i < plugins.length; i++) {
+		for (var i = 0; i < pluginsTemp.length; i++) {
 			checkVers(i);
 		}		
 	}
@@ -493,7 +469,7 @@ function checkVers(id,url){
 						updateImg.setAttribute("src", "../icons/updateVersion.svg");
 						updateImg.classList.add("updateImg");
 						updateImg.addEventListener("click", function(){
-							updateDiv2(plugins[id].name,plugins[id].version,plugins[id].version,plugins[id].id);
+							updateDiv(plugins[id].name,plugins[id].version,plugins[id].version,plugins[id].id);
 						});
 						imgDiv.appendChild(updateImg);
 					}
@@ -511,7 +487,7 @@ function checkVers(id,url){
 					updateImg.setAttribute("src", "../icons/updateVersion.svg");
 					updateImg.classList.add("updateImg");
 					updateImg.addEventListener("click", function(){
-						updateDiv2(plugins[id].name,plugins[id].version,plugins[id].version,plugins[id].id);
+						updateDiv(plugins[id].name,plugins[id].version,plugins[id].version,plugins[id].id);
 					});
 					imgDiv.appendChild(updateImg);		
 				}
