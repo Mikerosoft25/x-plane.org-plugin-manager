@@ -90,17 +90,6 @@ if(addButton){
 function checkExists(obj){
 	for (var i = 0; i < plugins.length; i++) {
 		if(plugins[i].name == obj.name){
-			// if(plugins[i].version == obj.version){
-			// 	removeSpinner();
-			// 	toast("This plugin is up to date!");
-			// }
-			// else{
-			// 	removeSpinner();
-			// 	plugins[i].version = obj.version;
-			// 	saveStorage();
-			// 	getCurrentVersions();
-			// 	toast("Plugin updated");
-			// }
 			removeSpinner();
 			toast("This plugin is already in your list!");
 			return true;	
@@ -147,10 +136,17 @@ function populateDivs(plugins, curVers){
 		footer.appendChild(insVerDiv);
 		footer.appendChild(curVerDiv);
 
-		var name = plugins[i].name;
-		if(name.length > 40){
-			nameDiv.setAttribute("title", name);
-			name = name.slice(0,40) + " ...";
+		nameDiv.setAttribute("title", plugins[i].name);
+		var temp_name = plugins[i].name.split(" "); 
+		var name = "";
+		for(var j = 0; j < temp_name.length; j++){
+			if(name.length + temp_name[j].length <= 38){
+				name += " " + temp_name[j];
+			}
+			else{
+				name += " ...";
+				break;
+			}
 		}
 		nameDiv.innerText = name;
 
@@ -205,11 +201,21 @@ function addDiv(plugin, curVersion){
 	footer.appendChild(insVerDiv);
 	footer.appendChild(curVerDiv);
 
-	var name = plugin.name;
-	if(name.length > 40){
-		nameDiv.setAttribute("title", name);
-		name = name.slice(0,40) + " ...";
+	nameDiv.setAttribute("title", plugin.name);
+	var temp_name = plugin.name.split(" "); 
+	console.log("tempName",temp_name, temp_name.length);
+	var name = "";
+	for(var i = 0; i < temp_name.length; i++){
+		if(name.length + temp_name[i].length <= 38){
+			console.log(name);
+			name += " " + temp_name[i];
+		}
+		else{
+			name += " ...";
+			break;
+		}
 	}
+
 	nameDiv.innerText = name;
 
 	insVerDiv.innerText = plugin.version;
@@ -242,9 +248,24 @@ function updateDiv(name, insVer, curVer, id){
 		var insVerDiv = divs[id].children[1].children[0];
 		var curVerDiv = divs[id].children[1].children[1];
 
-		if(name.length > 40){
-			name = name.slice(0,40) + " ...";
+		nameDiv.setAttribute("title", name);
+		var temp_name = name.split(" "); 
+		console.log("tempName",temp_name, temp_name.length);
+		var name = "";
+		for(var i = 0; i < temp_name.length; i++){
+			if(name.length + temp_name[i].length <= 38){
+				console.log(name);
+				name += " " + temp_name[i];
+			}
+			else{
+				name += " ...";
+				break;
+			}
 		}
+
+		// if(name.length > 40){
+		// 	name = name.slice(0,40) + " ...";
+		// }
 		nameDiv.innerText = name;
 		insVerDiv.innerText = insVer;
 		// insVerDiv.innerText = "test";
@@ -287,6 +308,8 @@ function getCurrentVersions(){
 		loading(imgDivs[i]);
 		httpGet(plugins[i].url, function(obj) {	
 			curVers[i] = obj.version;
+			// curVers[i] = "1000000000.0";
+			// -> for simulating new versions
 
 			updateDiv(plugins[i].name, plugins[i].version, curVers[i], i);
 			if(input.value.length > 0){
@@ -294,6 +317,7 @@ function getCurrentVersions(){
 			}
 		});
 	}
+
 	curVersTemp = curVers.slice();	
 }
 
