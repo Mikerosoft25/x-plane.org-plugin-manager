@@ -469,7 +469,12 @@ function checkVers(id,url){
 						updateImg.setAttribute("src", "../icons/updateVersion.svg");
 						updateImg.classList.add("updateImg");
 						updateImg.addEventListener("click", function(){
+							plugins[id].version = curVers[id];
+							saveStorage();
 							updateDiv(plugins[id].name,plugins[id].version,plugins[id].version,plugins[id].id);
+							for (var i = 0; i < plugins.length; i++) {
+								checkVers(i);
+							}
 						});
 						imgDiv.appendChild(updateImg);
 					}
@@ -487,7 +492,12 @@ function checkVers(id,url){
 					updateImg.setAttribute("src", "../icons/updateVersion.svg");
 					updateImg.classList.add("updateImg");
 					updateImg.addEventListener("click", function(){
+						plugins[id].version = curVers[id];
+						saveStorage();
 						updateDiv(plugins[id].name,plugins[id].version,plugins[id].version,plugins[id].id);
+						for (var i = 0; i < plugins.length; i++) {
+							checkVers(i);
+						}
 					});
 					imgDiv.appendChild(updateImg);		
 				}
