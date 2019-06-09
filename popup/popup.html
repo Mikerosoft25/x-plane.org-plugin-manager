@@ -1,22 +1,92 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title></title>
-		<link rel="stylesheet" type="text/css" href="stylesheet.css">
-		<link rel="stylesheet" type="text/css" href="../node_modules/normalize.css/normalize.css">
-		<meta charset="utf-8">
-		<script type="application/javascript" src="../node_modules/webextension-polyfill/dist/browser-polyfill.js"></script>
-		<script defer type="text/javascript" src="./script.js"></script>
-	</head>
-	<body>
-		<div id="header">
-			<div id="headerLeft" class="headerDivs"><input id="inputField" type="" name="" placeholder="Search your plugins..."></div>
-			<div id="editDiv" class="headerDivs headerButtons"><img class="headerImg" id="editImg" src="../icons/edit.svg"></div>
-			<div id="refreshDiv" class="headerDivs headerButtons"><img class="headerImg" src="../icons/refresh.svg"></div>
-			<div id="addDiv" class="headerDivs headerButtons"><img class="headerImg"  src="../icons/add.svg"></div>
+<head>
+	<title>X-Plane Plugin Manager v2</title>
+	<link rel="stylesheet" type="text/css" href="stylesheet.css">
+	<link rel="stylesheet" type="text/css" href="../node_modules/normalize.css/normalize.css">
+	<meta charset="utf-8">
+	<script type="application/javascript" src="../node_modules/webextension-polyfill/dist/browser-polyfill.js"></script>
+	<script defer type="text/javascript" src="./script.js"></script>
+</head>
+<body>
+	<div class="header">
+		<div id="search_container">
+			<div id="search_image_container">
+				<span class="helper"></span><img id="search_image" src="../icons/search_button.svg">
+			</div>
+			<div id="search_box_container">	
+				<input type="text" id="search_box" placeholder="Search your plugins...">
+			</div>
 		</div>
-		<div id="main">	
+		<div class="header_items" id="refresh_button_container">
+			<span class="helper"></span><img class="header_images" src="../icons/refresh_button.svg" height="26">	
 		</div>
-		<div id="snackbar"></div>
-	</body>
+		<div class="header_items" id="add_button_container">
+			<span class="helper"></span><img class="header_images" src="../icons/add_button.svg" height="26">	
+		</div>
+	</div>
+	<div id="main">
+	</div>
+	<div class="footer">
+		<div id="forum_button" class="footer_buttons">X-Plane forum plugins</div>
+		<div id='custom_button' class="footer_buttons">Custom Plugins</div>
+	</div>
+	<div class="add_overlay closed">
+		<div class="header overlay">
+			<div id="overlay_button_left_container">	
+			</div>
+			<div id="headline_container">
+				<p class="header_text" id="headline"></p>	
+			</div>
+			<div id="overlay_button_right_container">
+			</div>			
+		</div>
+		<div class="main overlay hide" id="overlay_main">
+			<div id="url_container" class="overlay_containers overlay_containers_hover">
+				<p class="overlay_input_text">Url</p>
+				<input id="url_input" type="text" class="overlay_input_box overlay_input_box_hover">	
+			</div>
+			<div id="name_container" class="overlay_containers overlay_containers_hover">
+				<p class="overlay_input_text">Name</p>
+				<input id="name_input" type="text" class="overlay_input_box overlay_input_box_hover">		
+			</div>
+			<div id="installed_version_container" class="overlay_containers overlay_containers_hover">
+				<p class="overlay_input_text">Installed Version</p>
+				<input id="installed_version_input"type="text" class="overlay_input_box overlay_input_box_hover">		
+			</div>
+			<div id="current_version_container" class="overlay_containers overlay_containers_hover">
+				<p class="overlay_input_text" id="current_checked_text"></p>
+				<input id="current_version_input"type="text" class="overlay_input_box overlay_input_box_hover">		
+			</div>
+			<div id="date_container" class="overlay_containers overlay_containers_hover">
+				<p class="overlay_input_text">Date</p>
+				<input id="date_input" type="text" class="overlay_input_box overlay_input_box_hover">		
+			</div>
+			<div id="notes_container">
+				<p class="overlay_input_text">Notes</p>
+				<div id="notes_input" contenteditable="true" class="overlay_notes_box notes_input_hover">
+				
+				</div>		
+			</div>
+		</div>
+		<div class="loader_container">
+			<div class="lds_roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>	
+		</div>
+	</div>
+	<div id="snackbar">
+		<div id="snackbar_text_container"></div>
+		<div id="snackbar_cross_container">
+			<span class="helper"></span><img id="cross_image" src="../icons/cross.svg" height="22">
+		</div>
+	</div>
+	<div id="button_placeholder" class="hide">
+		<div id="cancel_overlay_button" class="overlay_header_buttons hide"></div>
+		<div id="save_overlay_button" class="overlay_header_buttons hide"></div>
+		<div id="edit_overlay_button" class="overlay_header_buttons hide"></div>
+		<div id="close_overlay_button" class="overlay_header_buttons hide"></div>
+		<div id="cancel_edit_button" class="overlay_header_buttons hide"></div>
+		<div id="save_edit_button" class="overlay_header_buttons hide"></div>
+		<div id="delete_entry_button">Delete</div>		
+	</div>
+</body>
 </html>
