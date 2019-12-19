@@ -1,4 +1,4 @@
-var regex = /<script type='application\/ld\+json'>\n({\s+"@context": "http:\/\/schema\.org",\s+"@type": "WebApplication",[\s\S]+?)<\/script>/gim;
+var regex = /<script type='application\/ld\+json'>\s*({\s+"@context": "http:\/\/schema\.org",\s+"@type": "WebApplication",[\s\S]+?)<\/script>/gim;
 var forum_plugins = [];
 var custom_plugins = [];
 var plugins = [forum_plugins,custom_plugins];
