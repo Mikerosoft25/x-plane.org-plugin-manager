@@ -679,10 +679,6 @@ save_edit_button.addEventListener('click', function(){
 	saveToStorage();
 	let search_box_text = document.getElementById('search_box').value;
 	getSearch(search_box_text);
-	// clearSearchBox(); MDL+
-	// clearMain();
-	// populateMain();
-	// getCurrentVersions(); MDL-
 	removeOverlayButtons();
 	changeInputReadOnly(true,false);
 	addOverlayButton('close_overlay_button','edit_overlay_button');
@@ -698,13 +694,11 @@ delete_entry_button.addEventListener('click', function(){
 	let id = getPluginId(url);
 	if(show_forum_plugins){
 		if (id > -1) {
-			// forum_plugins.splice(id, 1);
 			forum_plugins[id].delete = true;
 		}		
 	}
 	else{
 		if (id > -1) {
-			// custom_plugins.splice(id, 1);
 			custom_plugins[id].delete = true;
 		}	
 	}
@@ -715,8 +709,6 @@ delete_entry_button.addEventListener('click', function(){
 		populateMain();
 		getCurrentVersions();
 		let search_box_text = document.getElementById('search_box').value;
-		// if(search_box_text != ''){
-		// }
 		getSearch(search_box_text);
 	});
 });
@@ -731,7 +723,6 @@ forum_button.addEventListener('click', function(){
 	if(!show_forum_plugins){
 		show_forum_plugins = true;
 		clearSearchBox();
-		// addVersionLoader();
 		getCurrentVersions();
 		
 
@@ -746,7 +737,6 @@ custom_button.addEventListener('click', function(){
 	if(show_forum_plugins){
 		show_forum_plugins = false;
 		clearSearchBox();
-		// getCurrentVersions();
 		let forum_button = document.getElementById('forum_button');
 		custom_button.style.textDecoration="underline";
 		forum_button.style.textDecoration="none";
@@ -1018,7 +1008,9 @@ function addPlugin(url,name,installed_version,current_checked){
 	open_button_container.appendChild(open_button_image);
 	
 	open_button_image.addEventListener('click', function(){
-		window.open(url,'_blank');
+		browser.tabs.create({
+			url: url
+		});
 		compareVersions();	
 	});
 
