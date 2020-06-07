@@ -2,7 +2,7 @@
 
 	"manifest_version": 2,
 	"name": "X-Plane plugin manager",
-	"version": "2.0.3",
+	"version": "2.0.4",
 
 	"description": "forums.x-plane.org plugin manager",
 	"homepage_url": "https://github.com/Mikerosoft25/plugin-manager",
@@ -15,17 +15,21 @@
 	},
 
 	"icons": {
-		"48": "icons/icon.png",
-		"96": "icons/icon.png"
+		"48": "icons/addon_icon48.png",
+		"64": "icons/addon_icon64.png",
+		"96": "icons/addon_icon96.png",
+		"128": "icons/addon_icon128.png"
 	},
 
 	"browser_action": {
 		"browser_style": true,
 		"default_icon": {
-			"48": "icons/icon.png",
-			"96": "icons/icon.png"
+			"48": "icons/addon_icon48.png",
+			"64": "icons/addon_icon64.png",
+			"96": "icons/addon_icon96.png",
+			"128": "icons/addon_icon128.png"
 		},
-		"default_title": "X-Plane plugin manager v2.0.2",
+		"default_title": "X-Plane plugin manager v2.0.4",
 		"default_popup": "popup/popup.html"
 	},
 
