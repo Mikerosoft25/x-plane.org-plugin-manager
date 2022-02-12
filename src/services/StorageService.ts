@@ -50,13 +50,12 @@ export const StorageService = {
 
   loadPlugins: async (): Promise<Plugin[]> => {
 
-    // await browser.storage.local.remove('plugins');
-
     // just for conversion of plugins from v2.x.x
     await StorageService.convertStorage();
 
     let storage = await browser.storage.local.get('plugins');
     if (storage.plugins) {
+      storage.plugins.forEach((plugin: Plugin) => plugin.latestVersion = undefined);
       return storage.plugins;
     } else {
       return [];

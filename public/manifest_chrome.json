@@ -3,11 +3,11 @@
   "author": "https://github.com/Mikerosoft25",
   "description": "forums.x-plane.org plugin manager",
   "homepage_url": "https://github.com/Mikerosoft25/plugin-manager",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "manifest_version": 2,
   "browser_action": {
     "default_popup": "index.html",
-    "default_title": "X-Plane plugin manager",
+    "default_title": "X-Plane Plugin Manager v3.0.1",
     "default_icon": {
       "48": "icons/addon_icon48.png",
       "64": "icons/addon_icon64.png",
