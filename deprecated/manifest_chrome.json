@@ -1,0 +1,36 @@
+{
+  "manifest_version": 2,
+  "name": "X-Plane plugin manager",
+  "version": "2.0.4",
+  "description": "forums.x-plane.org plugin manager",
+
+  "browser_action": {
+    "default_icon": {
+      "48": "icons/addon_icon48.png",
+		  "64": "icons/addon_icon64.png",
+		  "96": "icons/addon_icon96.png",
+		  "128": "icons/addon_icon128.png"
+    },
+    "default_title": "X-Plane plugin manager v2.0.4",
+    "default_popup": "popup/popup.html"
+  },
+
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs",
+    "*://forums.x-plane.org/*"
+  ],
+
+  "content_scripts": [{
+    "matches": ["http://*/*"],
+    "css": [
+      "popup/stylesheet.css",
+      "node_modules/normalize.css/normalize.css"
+    ],
+    "js": [
+      "node_modules/webextension-polyfill/dist/browser-polyfill.js",
+      "popup/script.js"
+    ]
+  }]
+}
